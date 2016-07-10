@@ -43,7 +43,26 @@ void *read_me(void*args) {
   }
   return NULL;
 }
-int main() {
+void write_via_streams() {
+  FILE *fp = fopen(FILE_PATH, "w+");
+  if (fp == NULL)
+    perror("write: ");
+  printf("write fileno: %d\n", fileno(fp));
+  fcntl(fileno(fp), F_SETFD, O_WRONLY|O_CREAT|O_TRUNC|O_SYNC);
+  fprintf(fp, "buffy 1\n");
+
+  pthread_t th;
+  pthread_create(&th, NULL, read_me, NULL);
+  sleep(1);
+
+  int secs = 59; 
+  while (secs > 0) {
+    fprintf(fp, "buffy %d\n", 60 - secs + 1);
+    secs--;
+    sleep(1);
+  }
+}
+void write_via_fds() {
   int fd = open(FILE_PATH, O_WRONLY|O_CREAT|O_TRUNC|O_SYNC, S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP|S_IROTH);
   if (fd < 0)
     perror("write: ");
@@ -52,8 +71,8 @@ int main() {
 
   pthread_t th;
   pthread_create(&th, NULL, read_me, NULL);
-  
   sleep(1);
+  
   int secs = 59; 
   while (secs > 0) {
     char text[11];
@@ -63,5 +82,12 @@ int main() {
   }
 
   sleep(1);
+}
+int main(int argc, char **argv) {
+  if (argc < 2)
+    write_via_fds();
+  else
+    write_via_streams();
+
   return 0;
 }
