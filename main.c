@@ -26,7 +26,8 @@
 #define FILE_PATH "nastybob.txt"
 
 void *read_me(void*args) {
-  int fd = open(FILE_PATH, O_RDONLY|O_SYNC);
+//  int fd = open(FILE_PATH, O_RDONLY|O_SYNC);
+  int fd = open(FILE_PATH, O_RDONLY);
   if (fd < 0)
     perror("read: ");
   printf("read fileno: %d\n", fd); 
@@ -63,7 +64,8 @@ void write_via_streams() {
   }
 }
 void write_via_fds() {
-  int fd = open(FILE_PATH, O_WRONLY|O_CREAT|O_TRUNC|O_SYNC, S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP|S_IROTH);
+//  int fd = open(FILE_PATH, O_WRONLY|O_CREAT|O_TRUNC|O_SYNC, S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP|S_IROTH);
+  int fd = open(FILE_PATH, O_WRONLY|O_CREAT|O_TRUNC, S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP|S_IROTH);
   if (fd < 0)
     perror("write: ");
   printf("write fileno: %d\n", fd);
